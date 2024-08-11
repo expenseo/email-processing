@@ -26,6 +26,7 @@ jobs:
 
       - name: Build Lambda
         run: |
+          cd lambda
           bun install
           bun run build
 
