@@ -6,7 +6,7 @@ resource "aws_api_gateway_rest_api" "email_processing_api_rest" {
 resource "aws_api_gateway_resource" "email_processing_resource" {
   rest_api_id = aws_api_gateway_rest_api.email_processing_api_rest.id
   parent_id   = aws_api_gateway_rest_api.email_processing_api_rest.root_resource_id
-  path_part   = "email-process"
+  path_part   = "process-email"
 }
 
 resource "aws_api_gateway_method" "email_processing_method" {
@@ -21,7 +21,8 @@ resource "aws_api_gateway_integration" "email_processing_lambda" {
   resource_id             = aws_api_gateway_resource.email_processing_resource.id
   http_method             = aws_api_gateway_method.email_processing_method.http_method
   integration_http_method = "POST"
-  type                    = "MOCK"
+  type                    = "AWS"
+  uri                     = aws_lambda_function.email_processing_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_method_response" "email_process_api_response" {
