@@ -20,14 +20,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Build the lambda
+      # Checkout to use bun
+      - name: Checkout Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Build Lambda
         run: |
-          curl -fsSL https://bun.sh/install | bash
-          source /home/runner/.bashrc
-          cd lambda
           bun install
           bun run build
+
         # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
