@@ -20,7 +20,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      # Build the lambda
+      - name: Build Lambda
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          cd lambda
+          bun install
+          bun run build
+        # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:

@@ -1,0 +1,15 @@
+{
+  "name": "email-processing-lambda",
+  "module": "src/index.ts",
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ../terraform/dist/src"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.143",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "type": "module"
+}
