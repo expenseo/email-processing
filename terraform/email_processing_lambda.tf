@@ -3,7 +3,7 @@ resource "aws_lambda_function" "email_processing_lambda" {
   function_name    = "email-processing-lambda"
   role             = aws_iam_role.lambda_role.arn
   handler          = "src/index.handler"
-  runtime          = "nodejs18.x"
+  runtime          = "nodejs20.x"
   source_code_hash = data.archive_file.build_zip.output_base64sha256
 }
 
