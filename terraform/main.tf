@@ -5,6 +5,14 @@ terraform {
       version = "~> 5.61.0"
     }
   }
+
+  cloud {
+    organization = "expenseo"
+
+    workspaces {
+      name = "email-processing"
+    }
+  }
 }
 
 resource "null_resource" "example" {
