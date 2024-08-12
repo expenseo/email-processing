@@ -8,7 +8,6 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: production
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -20,15 +19,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Checkout to use bun
-      - name: Checkout Bun
-        uses: oven-sh/setup-bun@v2
+      # Run yarn install
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+          dir: lamdba
 
-      - name: Build Lambda
-        run: |
-          cd lambda
-          bun install
-          bun run build
+      # Run yarn build
+      - name: Run build
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+          dir: lamdba
 
         # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
