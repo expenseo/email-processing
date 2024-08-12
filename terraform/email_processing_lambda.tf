@@ -18,5 +18,5 @@ resource "aws_lambda_permission" "email_processing_execution_api_gateway" {
   function_name = aws_lambda_function.email_processing_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.email_processing_api_rest.execution_arn}/*/*/*}/*"
+  source_arn = "${aws_api_gateway_rest_api.email_processing_api_rest.execution_arn}/*/*/*"
 }
