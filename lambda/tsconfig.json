@@ -3,16 +3,10 @@
     // Enable latest features
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleDetection": "force",
     "jsx": "react-jsx",
     "allowJs": true,
-
-    // Bundler mode
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": false,
-    "noEmit": true,
 
     // Best practices
     "strict": true,
@@ -22,6 +16,11 @@
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
-  }
+    "noPropertyAccessFromIndexSignature": false,
+
+    // Emit settings
+    "outDir": "../terraform/dist/src",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"] // Include all TypeScript files in the src directory
 }
