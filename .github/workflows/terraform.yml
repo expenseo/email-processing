@@ -23,15 +23,15 @@ jobs:
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
+          dir: lamdba
           cmd: install
-          dir: ./lamdba
 
       # Run yarn build
       - name: Run build
         uses: borales/actions-yarn@v4
         with:
+          dir: lamdba
           cmd: build
-          dir: ./lamdba
 
         # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
