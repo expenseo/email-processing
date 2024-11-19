@@ -29,3 +29,8 @@ Users can view, update, and manage their transactions easily.
 ### **Frontend:**
 - SwiftUI (iOS UI)
 - Apollo Client for Swift (GraphQL Integration)
+
+### **Contributors**
+- Antonio Estela
+- Ricardo Camayo
+- Joan García 
