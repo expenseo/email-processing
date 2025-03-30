@@ -172,3 +172,9 @@ dist
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# Terraform
+.terraform
+*.tfstate
+*.tfstate.*
+*.lock.hcl

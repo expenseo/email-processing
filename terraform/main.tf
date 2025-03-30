@@ -1,15 +1,14 @@
 terraform {
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 6.8"
     }
   }
-  cloud {
-    organization = "expenseo"
+}
 
-    workspaces {
-      name = "email-processing"
-    }
-  }
+provider "google" {
+  project = "expenseo-454900"
+  region  = "us-central1"
+  zone    = "us-central1-c"
 }
