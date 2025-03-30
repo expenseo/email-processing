@@ -1,51 +1,71 @@
-name: 'Terraform'
+name: Terraform CI/CD
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  plan:
+    name: Terraform Plan
     runs-on: ubuntu-latest
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-
+    outputs:
+      plan-exit-code: ${{ steps.plan.outcome }}
     steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # Run yarn install
-      - name: Run install
-        uses: borales/actions-yarn@v4
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
         with:
-          dir: lambda
-          cmd: install
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      # Run yarn build
-      - name: Run build
-        uses: borales/actions-yarn@v4
-        with:
-          dir: lambda
-          cmd: build
-
-      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
         with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          terraform_version: latest
 
-      # Generates an execution plan for Terraform
+      - name: Initialize Terraform
+        run: terraform init
+
       - name: Terraform Plan
-        working-directory: ./terraform
-        run: |
-          terraform init  
-          terraform plan -input=false
+        id: plan
+        run: terraform plan -out=tfplan
+        continue-on-error: false
 
-      # On push to "main", build or change infrastructure according to Terraform configuration files
-      - name: Terraform Apply
-        working-directory: ./terraform
-        run: terraform apply -auto-approve -input=false
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+
+  apply:
+    name: Terraform Apply
+    needs: plan
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Apply Terraform Changes
+        run: terraform apply -auto-approve tfplan
