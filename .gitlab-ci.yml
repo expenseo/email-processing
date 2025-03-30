@@ -1,0 +1,21 @@
+stages:
+  - plan
+  - apply
+  - destroy
+  - unlock
+
+variables:
+  TERRAFORM_IMAGE: hashicorp/terraform:latest
+  GCP_PROJECT_ID: expenseo-454900
+
+# ----- TEMPLATES -----
+.gcp_auth:
+  image: google/cloud-sdk:latest
+  script:
+    - gcloud auth activate-service-account --key-file <(echo "$GCP_CREDENTIALS")
+
+plan:
+  stage: plan
+  extends: .gcp_auth
+  script:
+    - echo "Running Terraform Plan"
