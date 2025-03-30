@@ -5,9 +5,21 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      action:
+        description: 'Select action to run'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+          - unlock
 
 jobs:
   plan:
+    if: github.event_name == 'push' || github.event.inputs.action == 'plan'
     name: Terraform Plan
     runs-on: ubuntu-latest
     outputs:
@@ -43,10 +55,9 @@ jobs:
           path: ./terraform/tfplan
 
   apply:
-    name: Terraform Apply
-    needs: plan
+    if: github.event.inputs.action == 'apply'
+    name: Terraform Apply (Manual)
     runs-on: ubuntu-latest
-    environment: manual-approval
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -74,3 +85,58 @@ jobs:
       - name: Apply Terraform Changes
         working-directory: ./terraform
         run: terraform apply -auto-approve tfplan
+
+  destroy:
+    if: github.event.inputs.action == 'destroy'
+    name: Terraform Destroy (Manual)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Initialize Terraform
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Destroy Terraform Resources
+        working-directory: ./terraform
+        run: terraform destroy -auto-approve
+
+  unlock:
+    if: github.event.inputs.action == 'unlock'
+    name: Terraform Unlock (Manual)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Initialize Terraform
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Unlock All Terraform Locks
+        working-directory: ./terraform
+        run: |
+          for LOCK_ID in $(terraform state list); do
+            terraform force-unlock -force "$LOCK_ID" || true
+          done
