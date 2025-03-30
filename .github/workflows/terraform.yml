@@ -26,6 +26,9 @@ jobs:
         with:
           terraform_version: latest
 
+      - name: Change Directory
+        run: cd terraform
+
       - name: Initialize Terraform
         run: terraform init
 
@@ -63,6 +66,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfplan
+
+      - name: Change Directory
+        run: cd terraform
 
       - name: Initialize Terraform
         run: terraform init
