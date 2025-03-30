@@ -26,14 +26,13 @@ jobs:
         with:
           terraform_version: latest
 
-      - name: Change Directory
-        run: cd terraform
-
       - name: Initialize Terraform
+        working-directory: ./terraform
         run: terraform init
 
       - name: Terraform Plan
         id: plan
+        working-directory: ./terraform
         run: terraform plan -out=tfplan
         continue-on-error: false
 
@@ -67,11 +66,10 @@ jobs:
         with:
           name: tfplan
 
-      - name: Change Directory
-        run: cd terraform
-
       - name: Initialize Terraform
+        working-directory: ./terraform
         run: terraform init
 
       - name: Apply Terraform Changes
+        working-directory: ./terraform
         run: terraform apply -auto-approve tfplan
